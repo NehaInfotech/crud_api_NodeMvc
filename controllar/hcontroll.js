@@ -72,6 +72,7 @@ exports.updatedata = async (req, res) => {
     });
   }
 };
+
 exports.login = async (req, res) => {
   try {
     const logindata = await modal.findOne({ email: req.body.email })
@@ -92,3 +93,17 @@ exports.login = async (req, res) => {
     });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
