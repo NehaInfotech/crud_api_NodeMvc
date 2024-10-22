@@ -1,113 +1,80 @@
-const modal = require("../model/user");
-const catagory=require('../model/catagory')
-const bcrypt = require("bcrypt");
-const jwt=require('jsonwebtoken')
-exports.createdata = async (req, res) => {
-  const data = req.body;
+const cetegory = require('../model/catagory')
+
+exports.Create = async (req, res) => {
+  const data = req.body
   try {
-    const createdata = await modal.create(data);
-    res.status(200).json({
-      status: "success",
-      Message: "data enter succes",
-      Data: createdata,
-    });
+      const createdata = await cetegory.create(data)
+      res.status(200).json({
+          status: "success",
+          Message: 'data enter succes',
+          Data: createdata
+      })
   } catch (error) {
-    res.status(404).json({
-      status: "fail",
-      Message: "not enter",
-    });
+      res.status(404).json({
+          status: "fail",
+          Message: "not enter"
+      })
+
   }
-};
-exports.showdata = async (req, res) => {
+}
+
+exports.show = async (req, res) => {
+  const data = req.body
   try {
-    const showdata = await modal.find();
-    res.status(200).json({
-      status: "success",
-      Message: "all data show",
-      Data: showdata,
-    });
+      const showdata = await cetegory.find(data)
+      res.status(200).json({
+          status: "success",
+          Message: 'data show succes',
+          Data: showdata
+      })
   } catch (error) {
-    res.status(404).json({
-      status: "fail",
-      Message: error.Message,
-      data: [],
-    });
+      res.status(404).json({
+          status: "fail",
+          Message: "not show"
+      })
+
   }
-};
-exports.deletedata = async (req, res) => {
-  const deleteId = req.params.id;
+}
+
+
+exports.Delete = async (req, res) => {
+  const Id = req.params.id;
+
   try {
-    await modal.findByIdAndDelete(deleteId);
-    res.status(200).json({
-      status: "success",
-      Message: "all data delete",
-    });
+      const deletdata = await cetegory.findByIdAndDelete(Id);
+
+      res.status(200).json({
+          status: "success",
+          message: 'Data deleted successfully',
+          data: deletdata
+      });
   } catch (error) {
-    res.status(404).json({
-      status: "fail",
-      Message: error.Message,
-      data: [],
-    });
+      res.status(500).json({
+          status: "fail",
+          message: error.message,
+          data: []
+      });
   }
 };
 
-exports.updatedata = async (req, res) => {
-  const updateId = req.params.id;
-
+exports.updete = async (req, res) => {
+  const Id = req.params.id;
   try {
-    await modal.findByIdAndUpdate(updateId, req.body);
-    res.status(200).json({
-      status: "success",
-      Message: "all data update",
-    });
+      const updetedata = await cetegory.findByIdAndUpdate(Id,req.body)
+      res.status(200).json({
+          status: "success",
+          Message: 'data updete succes',
+          Data: updetedata
+      })
   } catch (error) {
-    res.status(404).json({
-      status: "fail",
-      Message: error.Message,
-      data: [],
-    });
-  }
-};
+      res.status(404).json({
+          status: "fail",
+          Message: "not updete",
+          data: []
+      })
 
-exports.signup = async (req, res) => {
-  const data = req.body;
-  try {
-    req.body.pass = await bcrypt.hash(req.body.pass, 3);
-
-    const createdata = await modal.create(data);
-    res.status(200).json({
-      status: "success",
-      Message: "data enter succes",
-      Data: createdata,
-    });
-  } catch (error) {
-    res.status(404).json({
-      status: "fail",
-      Message: "not enter",
-    });
   }
-};
-
-exports.login = async (req, res) => {
-  try {
-    const logindata = await modal.findOne({ email: req.body.email })
-    if (!logindata) throw new Error("invalid email");
-    const verifypass =  bcrypt.compare(req.body.pass, logindata.pass);
-    if (!verifypass) throw new Error("invalid password");
-    const token =jwt.sign({id : logindata._id},'surat')
-    res.status(200).json({
-      statuse: "sucsess",
-      Message: "Login user succsessfuly",
-      Data: logindata,
-      token
-    });
-  } catch {
-    res.status(404).json({
-      status: "fail",
-      Message: "ERROR",
-    });
-  }
-};
+}
 
 
 

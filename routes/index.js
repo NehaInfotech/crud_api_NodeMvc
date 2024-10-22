@@ -5,11 +5,11 @@ let UC = require('../controllar/hcontroll')
 const CC = require('../controllar/catagoryControllar')
 const AM = require('../middleware/authcheack')
 
-router.post('/createdata',AM.tokensecure, UC.createdata)
-router.get('/showdata', AM.tokensecure,UC.showdata)
-router.delete('/deletedata/:id',AM.tokensecure, UC.deletedata)
-router.patch('/updatedata/:id',AM.tokensecure, UC.updatedata)
-router.post('/login', UC.login)
-router.post('/signup', UC.signup)
+router.post('/Create',AM.tokensecure, UC.Create)
+router.get('/show', AM.tokensecure,UC.show)
+router.delete('/Delete/:id',AM.tokensecure, UC.Delete)
+router.patch('/updete/:id',AM.tokensecure, UC.updete)
+router.post('/login', CC.login)
+router.post('/signup', CC.signup)
 
 module.exports = router;

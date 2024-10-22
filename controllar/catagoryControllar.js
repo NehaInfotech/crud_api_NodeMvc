@@ -1,27 +1,71 @@
 const model = require("../model/user");
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com", // Change this line
+  host: "smtp.gmail.com",
   port: 587,
-  secure: false, // true for port 465, false for other ports
+  secure: false, 
   auth: {
-      user: "nehagoti446@gmail.com",
-      pass: "aobgckueubvulukc",
+    user: "nehagoti446@gmail.com",
+    pass: "aobgckueubvulukc",
   },
 });
+
 async function main(data) {
-  // send mail with defined transport object
+  // Send mail with defined transport object
   const info = await transporter.sendMail({
-      from: '"Maddison Foo Koch 👻" <nehagoti446@gmail.com>', // sender address
-      to: data.email, // list of receivers
-      subject: `Hello ✔ ${data.name} Success fully email send to neha goti `, // Subject line
-      text: "Hello world?", // plain text body
-      html: "<b>Hello world?</b>", // html body
+    from: '"Maddison Foo Koch 👻" <nehagoti446@gmail.com>',
+    to: data.email,
+    subject: `Hello ✔ ${data.name}, email successfully sent to Neha Goti`, 
+    text: "Hello world?", 
+    html: "<b>Hello world?</b>", 
   });
 
   console.log("Message sent: %s", info.messageId);
-  // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
 }
+
+exports.signup = async (req, res) => {
+  const data = req.body;
+  try {
+    data.pass = await bcrypt.hash(req.body.pass, 10);  // Higher salt rounds are better (10 is recommended)
+    await main(data);
+    const createdata = await model.create(data);
+    res.status(200).json({
+      status: "success",
+      Message: "Data entered successfully",
+      Data: createdata,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(404).json({
+      status: "fail",
+      Message: "Error: Data not entered",
+    });
+  }
+};
+
+exports.login = async (req, res) => {
+  try {
+    const logindata = await model.findOne({ email: req.body.email });
+    if (!logindata) throw new Error("Invalid email");
+
+    const verifypass = await bcrypt.compare(req.body.pass, logindata.pass);
+    if (!verifypass) throw new Error("Invalid password");
+
+    const token = jwt.sign({ id: logindata._id }, 'surat');
+    res.status(200).json({
+      status: "success",
+      Message: "Login successful",
+      Data: logindata,
+      token,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(404).json({
+      status: "fail",
+      Message: "Login failed",
+    });
+  }
+};
