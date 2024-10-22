@@ -1,11 +1,10 @@
 const modal = require("../model/user");
+const catagory=require('../model/catagory')
 const bcrypt = require("bcrypt");
 const jwt=require('jsonwebtoken')
 exports.createdata = async (req, res) => {
   const data = req.body;
   try {
-    req.body.pass = await bcrypt.hash(req.body.pass, 3);
-
     const createdata = await modal.create(data);
     res.status(200).json({
       status: "success",
@@ -19,7 +18,6 @@ exports.createdata = async (req, res) => {
     });
   }
 };
-
 exports.showdata = async (req, res) => {
   try {
     const showdata = await modal.find();
@@ -36,10 +34,8 @@ exports.showdata = async (req, res) => {
     });
   }
 };
-
 exports.deletedata = async (req, res) => {
   const deleteId = req.params.id;
-
   try {
     await modal.findByIdAndDelete(deleteId);
     res.status(200).json({
@@ -69,6 +65,25 @@ exports.updatedata = async (req, res) => {
       status: "fail",
       Message: error.Message,
       data: [],
+    });
+  }
+};
+
+exports.signup = async (req, res) => {
+  const data = req.body;
+  try {
+    req.body.pass = await bcrypt.hash(req.body.pass, 3);
+
+    const createdata = await modal.create(data);
+    res.status(200).json({
+      status: "success",
+      Message: "data enter succes",
+      Data: createdata,
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: "fail",
+      Message: "not enter",
     });
   }
 };

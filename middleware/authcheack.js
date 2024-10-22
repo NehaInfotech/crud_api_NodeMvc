@@ -1,5 +1,5 @@
 const jwt= require('jsonwebtoken')
-const model =  require('../modal/friend')
+const model =  require('../model/user')
 
 exports.tokensecure = async( req,res,next)=>{
     try{
